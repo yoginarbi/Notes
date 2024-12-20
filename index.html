@@ -103,11 +103,12 @@
 			// Mengganti ukuran font
 			applyFontBtn.addEventListener("click", () => {
 				const fontSize = fontSizeInput.value;
-				if (fontSize >= 10 && fontSize <= 50) {
-					textArea.style.fontSize = `${fontSize}px`;
-				} else {
-					alert("Ukuran font harus antara 10 dan 50");
-				}
+				textArea.style.fontSize = `${fontSize}px`;
+				// if (fontSize >= 10 && fontSize <= 50) {
+				// 	textArea.style.fontSize = `${fontSize}px`;
+				// } else {
+				// 	alert("Ukuran font harus antara 10 dan 50");
+				// }
 			});
 		</script>
 	</body>

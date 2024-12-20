@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Edit File TXT di Browser</title>
+		<style>
+			/* CSS untuk membuat textarea penuh layar */
+			body {
+				margin: 0;
+				display: flex;
+				flex-direction: column;
+				height: 100vh;
+			}
+
+			#textArea {
+				flex: 1; /* Mengisi seluruh ruang kosong */
+				width: 100%;
+				border: 1px solid #ccc;
+				box-sizing: border-box;
+				padding: 10px;
+				font-family: Arial, sans-serif;
+				font-size: 16px;
+				resize: none; /* Nonaktifkan fitur resize manual */
+				overflow-y: auto; /* Tampilkan scroll saat teks terlalu panjang */
+			}
+
+			#controls {
+				display: flex;
+				gap: 10px;
+				padding: 10px;
+				background: #f5f5f5;
+				border-top: 1px solid #ddd;
+				align-items: center;
+			}
+
+			button,
+			input {
+				font-size: 16px;
+				padding: 10px;
+			}
+
+			#fontSizeInput {
+				width: 80px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="controls">
+			<input type="file" id="fileInput" accept=".txt" />
+			<label for="fontSizeInput">Ukuran Font:</label>
+			<input type="number" id="fontSizeInput" min="10" max="50" value="16" />
+			<button id="applyFontBtn">Terapkan Ukuran Font</button>
+			<button id="saveBtn">Simpan Perubahan</button>
+		</div>
+		<textarea id="textArea" placeholder="Konten file akan muncul di sini"></textarea>
+
+		<script>
+			const fileInput = document.getElementById("fileInput");
+			const textArea = document.getElementById("textArea");
+			const saveBtn = document.getElementById("saveBtn");
+			const fontSizeInput = document.getElementById("fontSizeInput");
+			const applyFontBtn = document.getElementById("applyFontBtn");
+
+			// Membaca file yang diunggah
+			fileInput.addEventListener("change", (event) => {
+				const file = event.target.files[0];
+				if (file) {
+					const reader = new FileReader();
+					reader.onload = (e) => {
+						textArea.value = e.target.result;
+					};
+					reader.readAsText(file);
+				}
+			});
+
+			// Menyimpan perubahan ke file baru dengan memilih lokasi penyimpanan
+			saveBtn.addEventListener("click", async () => {
+				const editedContent = textArea.value;
+				const blob = new Blob([editedContent], { type: "text/plain" });
+
+				// Gunakan File System Access API untuk memilih lokasi penyimpanan
+				try {
+					const handle = await window.showSaveFilePicker({
+						suggestedName: "edited-file.txt",
+						types: [
+							{
+								description: "Text Files",
+								accept: { "text/plain": [".txt"] },
+							},
+						],
+					});
+					const writable = await handle.createWritable();
+					await writable.write(blob);
+					await writable.close();
+					alert("File berhasil disimpan!");
+				} catch (err) {
+					console.error("Gagal menyimpan file:", err);
+					alert("Proses penyimpanan dibatalkan atau terjadi kesalahan.");
+				}
+			});
+
+			// Mengganti ukuran font
+			applyFontBtn.addEventListener("click", () => {
+				const fontSize = fontSizeInput.value;
+				if (fontSize >= 10 && fontSize <= 50) {
+					textArea.style.fontSize = `${fontSize}px`;
+				} else {
+					alert("Ukuran font harus antara 10 dan 50");
+				}
+			});
+		</script>
+	</body>
+</html>
